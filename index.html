@@ -568,4 +568,465 @@
                                 <form onSubmit={handleCreate} className="space-y-4">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="col-span-2"><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Taksonomi Spesies</label><select value={form.species} onChange={e=>setForm({...form, species: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm"><option value="Thunnus albacares (Yellowfin)">Yellowfin Tuna</option><option value="Thunnus obesus (Bigeye)">Bigeye Tuna</option></select></div>
-                                        <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2
+                                        <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Identitas Armada Kapal</label><input required type="text" value={form.kapal} onChange={e=>setForm({...form, kapal: e.target.value})} placeholder="Contoh: KM Samudra 01" className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm" /></div>
+                                        <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Spesifikasi Alat Tangkap</label><select value={form.alatTangkap} onChange={e=>setForm({...form, alatTangkap: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm"><option value="Rawai (Longline)">Rawai (Longline)</option><option value="Pancing Ulur (Handline)">Pancing Ulur (Handline)</option><option value="Pukat Cincin (Purse Seine)">Pukat Cincin (Purse Seine)</option></select></div>
+                                        <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Koordinat Geografis Operasi</label><input required type="text" value={form.wpp} onChange={e=>setForm({...form, wpp: e.target.value})} placeholder="Contoh: WPP 714" className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm" /></div>
+                                        <div><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Suhu Sistem Penyimpanan (°C)</label><input required type="number" step="0.1" value={form.temp} onChange={e=>setForm({...form, temp: e.target.value})} placeholder="-20" className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 text-sm" /></div>
+                                        <div className="col-span-2"><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Pengukuran Biomassa (kg)</label><input required type="number" step="0.1" value={form.weight} onChange={e=>setForm({...form, weight: e.target.value})} placeholder="Biomassa diidentifikasi saat bersandar" className="w-full bg-gray-50 border border-gray-200 rounded-xl py-3 px-4 font-bold text-lg" /></div>
+                                        <div className="col-span-2"><label className="block text-xs font-bold text-gray-500 uppercase mb-2">Lampiran Otentikasi (SHTI)</label><div className="border-2 border-dashed border-gray-300 rounded-xl p-4 bg-gray-50"><input type="file" onChange={e => setForm({...form, docName: e.target.files[0]?.name})} className="text-xs text-gray-500 w-full" accept=".pdf,image/*" /></div></div>
+                                    </div>
+                                    <div className="flex gap-3 pt-4 border-t border-gray-100">
+                                        <button type="button" onClick={() => setShowCreateModal(false)} className="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition">Batalkan</button>
+                                        <button type="submit" className="flex-1 py-3 rounded-xl font-bold text-white bg-situna-dark hover:bg-situna-main transition shadow-md">Simpan Rekam Jejak Primer</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    )}
+
+                    {deleteConfirm && (
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 fade-in">
+                            <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center">
+                                <div className="w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl"><i className="fas fa-trash"></i></div>
+                                <h3 className="text-xl font-bold text-gray-800 mb-2">Otorisasi Penghapusan Dokumen</h3>
+                                <p className="text-xs text-gray-500 mb-6">Informasi ketertelusuran untuk referensi <strong>{deleteConfirm}</strong> akan direduksi dari sistem secara permanen.</p>
+                                <div className="flex gap-3">
+                                    <button onClick={() => setDeleteConfirm(null)} className="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition">Batalkan</button>
+                                    <button onClick={() => handleDelete(deleteConfirm)} className="flex-1 py-3 rounded-xl font-bold text-white bg-red-500 hover:bg-red-600 transition shadow-md">Konfirmasi Penghapusan</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    {resetConfirm && (
+                        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 fade-in">
+                            <div className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center">
+                                <div className="w-16 h-16 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"><i className="fas fa-exclamation-triangle"></i></div>
+                                <h3 className="text-xl font-bold text-red-600 mb-2">Konfirmasi Pengaturan Ulang Pangkalan Data</h3>
+                                <p className="text-xs text-gray-500 mb-6">Tindakan ini akan mengeliminasi seluruh rekaman informasi dari arsitektur sistem. Apakah Anda akan melanjutkan?</p>
+                                <div className="flex gap-3">
+                                    <button onClick={() => setResetConfirm(false)} className="flex-1 py-3 rounded-xl font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 transition">Batalkan</button>
+                                    <button onClick={handleReset} className="flex-1 py-3 rounded-xl font-bold text-white bg-red-600 hover:bg-red-700 transition shadow-md">Lanjutkan Proses Reset</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const LotDetail = ({ lotId, lots, user, onBack, updateLots, showToast }) => {
+            const lot = lots.find(l => l.id === lotId);
+            const [tab, setTab] = useState('Inspeksi & Uji Klinis');
+
+            const qrRef = useRef(null);
+            const pdfQrRef = useRef(null);
+            const [serahForm, setSerahForm] = useState({ rWeight: '' });
+            const [neracaForm, setNeracaForm] = useState({ prod: '', byprod: '', shrink: '' });
+            const [pecahForm, setPecahForm] = useState({ w1: '', w2: '' });
+            const [labForm, setLabForm] = useState({ histamine: '', parasit: 'Absensi Parasit', metals: 'Kesesuaian Standar Aman' });
+            const [koreksiForm, setKoreksiForm] = useState({ field: 'Biomassa', oldVal: lot?.weight || '', newVal: '', reason: '' });
+
+            useEffect(() => {
+                if (qrRef.current && window.QRious) new QRious({ element: qrRef.current, value: `https://situna.go.id/verify/${lot.id}`, size: 130, background: 'white', foreground: '#0f172a' });
+                if (pdfQrRef.current && window.QRious) new QRious({ element: pdfQrRef.current, value: `https://situna.go.id/verify/${lot.id}`, size: 90, background: 'white', foreground: '#000000' });
+            }, [lot]);
+
+            if (!lot) return null;
+
+            const handleKirim = () => {
+                const updated = { ...lot, handover: { ...lot.handover, status: 'Menunggu Penerima' }, history: [...lot.history, { time: new Date().toLocaleString(), actor: user.name, action: `Komoditas didistribusikan ke fasilitas Unit Pengolahan Ikan (UPI). Dalam proses pemantauan administrasi lanjutan.`}] };
+                updateLots(lots.map(l => l.id === lot.id ? updated : l)); showToast("Instruksi distribusi komoditas diterbitkan.", "info");
+            };
+            const handleTerima = (e) => {
+                e.preventDefault(); const rW = parseFloat(serahForm.rWeight);
+                const updated = { ...lot, axisA: rW !== lot.handover.senderW ? 'deviasi_terdeteksi' : lot.axisA, handover: { ...lot.handover, status: 'Diterima', receiver: user.name, receiverW: rW }, history: [...lot.history, { time: new Date().toLocaleString(), actor: user.name, action: `Penerimaan logistik pada Fasilitas Pengolahan terverifikasi. Pengendalian sistem rantai dingin dipertahankan. Volume biomassa: ${rW}kg.`}] };
+                updateLots(lots.map(l => l.id === lot.id ? updated : l)); showToast("Konfirmasi penerimaan berhasil dicatat ke pangkalan data.", "success");
+            };
+            const handleNeraca = (e) => {
+                e.preventDefault(); const p = parseFloat(neracaForm.prod); const b = parseFloat(neracaForm.byprod); const s = parseFloat(neracaForm.shrink);
+                const total = p + b + s; const diff = Math.abs(lot.weight - total);
+                const updated = { ...lot, weight: p, stage: 2, axisA: diff > (lot.weight * 0.01) ? 'deviasi_signifikan' : lot.axisA, processInfo: { product: p, byproduct: b, shrink: s, diff, original: lot.weight }, history: [...lot.history, { time: new Date().toLocaleString(), actor: user.name, action: `Eksekusi reduksi ukuran (pemotongan loin). Rasio In: ${lot.weight}, Rasio Out: ${total}. Deviasi kalkulasi tercatat sebesar: ${diff.toFixed(2)}kg.`}] };
+                updateLots(lots.map(l => l.id === lot.id ? updated : l)); showToast("Parameter neraca massa terverifikasi secara sistematis.", "success");
+            };
+            const handlePecah = (e) => {
+                e.preventDefault(); const w1 = parseFloat(pecahForm.w1); const w2 = parseFloat(pecahForm.w2);
+                if (w1 + w2 > lot.weight) { showToast("Penolakan Sistem: Kalkulasi melebihi alokasi biomassa primer.", "error"); return; }
+                const base = { type: 'split', parents: [lot.id], stage: lot.stage, catchInfo: lot.catchInfo, processInfo: lot.processInfo, axisA: lot.axisA, axisB: lot.axisB, axisC: lot.axisC, handover: lot.handover, tempGap: lot.tempGap, creator: user.name, createdAt: new Date().toLocaleString() };
+                const c1 = { ...base, id: generateID(), species: `${lot.species} (Kode Produksi B1)`, weight: w1, history: [{ time: new Date().toLocaleString(), actor: user.name, action: `Alokasi produk turunan (batch) dari referensi induk ${lot.id}.`}] };
+                const c2 = { ...base, id: generateID(), species: `${lot.species} (Kode Produksi B2)`, weight: w2, history: [{ time: new Date().toLocaleString(), actor: user.name, action: `Alokasi produk turunan (batch) dari referensi induk ${lot.id}.`}] };
+                const upInduk = { ...lot, history: [...lot.history, { time: new Date().toLocaleString(), actor: user.name, action: `Restrukturisasi kode produksi menjadi identitas ${c1.id} & ${c2.id}.`}] };
+                updateLots([c1, c2, upInduk, ...lots.filter(l => l.id !== lot.id)]); showToast("Penyesuaian kode produksi berhasil direkam.", "success");
+            };
+            const handleLabTest = (e, decision) => {
+                e.preventDefault(); const newStage = decision === 'Memenuhi Kelayakan Ekspor' ? 4 : 3;
+                const updated = { ...lot, stage: newStage, axisC: decision.toLowerCase(), labInfo: { ...labForm, decision }, history: [...lot.history, { time: new Date().toLocaleString(), actor: user.name, action: `Pelaksanaan Inspeksi Klinis Karantina. Ketetapan Resmi: ${decision}.`}] };
+                updateLots(lots.map(l => l.id === lot.id ? updated : l)); showToast(`Status Kelayakan Uji Klinis: ${decision}`, decision === 'Memenuhi Kelayakan Ekspor' ? 'success' : 'error');
+            };
+            const simulasikanSuhu = () => {
+                const updated = { ...lot, tempGap: true, axisA: 'deviasi_terdeteksi', history: [...lot.history, { time: new Date().toLocaleString(), actor: user.name, action: `Deteksi kegagalan pada mekanisme operasional rantai dingin (Cold Chain). Degradasi mutu potensial didokumentasikan.`}] };
+                updateLots(lots.map(l => l.id === lot.id ? updated : l)); showToast("Anomali pengendalian suhu berhasil direkam pada audit.", "info");
+            };
+            const handleKoreksi = (e) => {
+                e.preventDefault();
+                const updated = { ...lot, weight: parseFloat(koreksiForm.newVal), axisA: 'memadai', history: [...lot.history, { time: new Date().toLocaleString(), actor: user.name, action: `Rekonsiliasi Sistem Otoritas: Parameter biomassa dikalibrasi dari nilai ${koreksiForm.oldVal} menuju angka ${koreksiForm.newVal}. Justifikasi perbaikan: ${koreksiForm.reason}`}] };
+                updateLots(lots.map(l => l.id === lot.id ? updated : l)); showToast("Ketetapan koreksional direkam dalam buku log audit sistem.", "success");
+            };
+
+            const downloadPDF = () => {
+                showToast("Mempersiapkan dokumen Sertifikat Kesehatan...", "info");
+                const container = document.getElementById('pdf-certificate-container');
+                container.style.display = 'block';
+                const element = document.getElementById('pdf-certificate-content');
+                
+                const opt = { 
+                    margin: [30, 30, 30, 30], 
+                    filename: `HealthCertificate_${lot.id}.pdf`, 
+                    image: { type: 'jpeg', quality: 0.98 }, 
+                    html2canvas: { scale: 2, useCORS: true }, 
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
+                };
+                
+                html2pdf().set(opt).from(element).save().then(()=> {
+                    container.style.display = 'none';
+                    showToast("Dokumen Sertifikat Kesehatan berhasil diunduh secara resmi.", "success");
+                }).catch((err) => {
+                    container.style.display = 'none';
+                    showToast("Terdapat anomali teknis saat mengekspor dokumen.", "error");
+                });
+            };
+
+            const TABS = ['Inspeksi & Uji Klinis', 'Validasi Serah Terima', 'Kalkulasi Neraca Massa', 'Pohon Silsilah Komoditas', 'Pengendalian Rantai Dingin', 'Buku Log Audit'];
+
+            return (
+                <div className="min-h-screen p-4 md:p-8 max-w-6xl mx-auto fade-in pb-24">
+                    <div className="flex items-center gap-4 mb-6">
+                        <button onClick={onBack} className="bg-white p-3 rounded-2xl shadow-sm border"><i className="fas fa-arrow-left"></i></button>
+                        <div>
+                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                                Identitas Dokumen: <span className="font-mono text-white bg-situna-main px-3 py-1 rounded-lg text-lg shadow-sm border border-gray-100">{lot.id}</span>
+                            </h2>
+                        </div>
+                    </div>
+
+                    <div className="glass-card p-6 rounded-3xl mb-6 shadow-sm border-t-4 border-t-situna-main">
+                        <h4 className="text-sm font-bold text-gray-700 mb-6 uppercase tracking-wider text-center">Status Rantai Pasok Terkini</h4>
+                        <div className="flex justify-between relative max-w-4xl mx-auto mb-2 px-8">
+                            <div className="absolute top-4 left-16 right-16 h-1 bg-gray-200 z-0">
+                                <div className="h-full bg-situna-main transition-all duration-700" style={{width: `${((lot.stage - 1) / 3) * 100}%`}}></div>
+                            </div>
+                            {[1, 2, 3, 4].map(step => (
+                                <div key={step} className="flex flex-col items-center z-10 w-24">
+                                    <div className={`step-circle text-sm transition-colors duration-500 ${lot.stage >= step ? 'bg-situna-main text-white shadow-md' : 'bg-gray-200 text-gray-500'}`}>
+                                        {lot.stage > step ? <i className="fas fa-check"></i> : step}
+                                    </div>
+                                    <span className={`text-[10px] font-bold uppercase mt-3 text-center ${lot.stage >= step ? 'text-situna-dark' : 'text-gray-400'}`}>
+                                        {step === 1 ? 'Pendaratan' : step === 2 ? 'Fasilitas UPI' : step === 3 ? 'Karantina' : 'Sertifikasi'}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div className="lg:col-span-1 space-y-6">
+                            <div className="glass-card p-6 rounded-3xl shadow-sm text-center">
+                                <canvas ref={qrRef} className="rounded-xl mx-auto border p-2 bg-white shadow-sm mb-4"></canvas>
+                                <h3 className="font-bold text-gray-800 text-lg leading-tight">{lot.species}</h3>
+                                <p className="text-xs text-gray-500 mt-1"><i className="fas fa-ship text-situna-main mr-1"></i> {lot.catchInfo?.kapal} | <i className="fas fa-map-marker-alt text-situna-main mx-1"></i> {lot.catchInfo?.wpp}</p>
+                                <div className="mt-4 bg-gray-50 p-4 rounded-xl border flex justify-between items-center text-left">
+                                    <div><p className="text-[10px] font-bold text-gray-400 uppercase">Biomassa Terekam</p><p className="text-2xl font-black text-situna-dark">{lot.weight} <span className="text-sm">kg</span></p></div>
+                                </div>
+                                <div className="mt-4 text-[10px] text-gray-500 flex justify-center gap-2 items-center bg-blue-50 py-1.5 rounded-lg border border-blue-100">
+                                    <i className="fas fa-paperclip text-situna-main"></i> <span>Administrasi: {lot.catchInfo?.doc} (Validasi Anti-IUU)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="lg:col-span-2">
+                            <div className="glass-card rounded-3xl overflow-hidden shadow-xl border border-white">
+                                <div className="flex border-b border-gray-200 overflow-x-auto bg-gray-50/50">
+                                    {TABS.map(t => (
+                                        <button key={t} onClick={() => setTab(t)} className={`px-5 py-4 font-bold text-[11px] uppercase tracking-wider whitespace-nowrap transition-colors ${tab === t ? 'border-b-2 border-situna-main text-situna-dark bg-white' : 'text-gray-400 hover:bg-gray-100'}`}>{t}</button>
+                                    ))}
+                                </div>
+                                
+                                <div className="p-6 md:p-8 min-h-[350px]">
+                                    {tab === TABS[0] && (
+                                        <div className="space-y-6 fade-in">
+                                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                                <div className="border rounded-xl p-3"><h4 className="text-[10px] font-bold text-gray-400 uppercase mb-2">Verifikasi Dokumen</h4><Badge label={lot.axisA.replace('_', ' ')} color={lot.axisA === 'memadai' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} /></div>
+                                                <div className="border rounded-xl p-3"><h4 className="text-[10px] font-bold text-gray-400 uppercase mb-2">Penanganan Operasional</h4><Badge label={lot.axisB.replace('_', ' ')} color={lot.axisB === 'tidak_terindikasi' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} /></div>
+                                                <div className="border border-blue-300 rounded-xl p-3 bg-blue-50/50"><h4 className="text-[10px] font-bold text-blue-800 uppercase mb-2">Ketetapan Klinis</h4><Badge label={lot.axisC.replace('_', ' ')} color={lot.axisC.includes('memenuhi') ? 'bg-green-500 text-white' : lot.axisC.includes('ditolak') ? 'bg-red-500 text-white' : 'bg-blue-200 text-blue-800'} /></div>
+                                            </div>
+
+                                            {user.role === 'karantina' && lot.stage >= 2 && lot.stage < 4 && (
+                                                <form onSubmit={(e) => e.preventDefault()} className="bg-gray-50 border p-4 rounded-xl space-y-3">
+                                                    <p className="text-xs font-bold text-gray-700 mb-2 border-b pb-2"><i className="fas fa-microscope text-situna-main mr-2"></i>Formulir Pengujian Laboratorium Barantin</p>
+                                                    <div className="grid grid-cols-2 gap-3 text-xs">
+                                                        <div><label className="block text-gray-500 mb-1">Konsentrasi Histamin (ppm)</label><input type="number" value={labForm.histamine} onChange={e=>setLabForm({...labForm, histamine: e.target.value})} className="w-full border rounded p-2" /></div>
+                                                        <div><label className="block text-gray-500 mb-1">Pemeriksaan Parasitologi</label><select value={labForm.parasit} onChange={e=>setLabForm({...labForm, parasit: e.target.value})} className="w-full border rounded p-2"><option>Absensi Parasit</option><option>Teridentifikasi Patogen</option></select></div>
+                                                        <div className="col-span-2"><label className="block text-gray-500 mb-1">Tingkat Cemaran Logam Berat (Pb/Hg)</label><select value={labForm.metals} onChange={e=>setLabForm({...labForm, metals: e.target.value})} className="w-full border rounded p-2"><option>Kesesuaian Standar Aman</option><option>Melebihi Ambang Batas Toksisitas</option></select></div>
+                                                    </div>
+                                                    <div className="flex gap-2 mt-4 pt-2">
+                                                        <button onClick={(e) => handleLabTest(e, 'Penolakan Otorisasi Ekspor')} className="flex-1 bg-red-100 text-red-700 font-bold py-2 rounded-lg text-xs">Tolak Sertifikasi</button>
+                                                        <button onClick={(e) => handleLabTest(e, 'Memenuhi Kelayakan Ekspor')} className="flex-1 bg-green-500 text-white font-bold py-2 rounded-lg text-xs shadow-md">Terbitkan Ketetapan Kelayakan (Health Certificate)</button>
+                                                    </div>
+                                                </form>
+                                            )}
+                                            {lot.stage === 4 && (
+                                                <button onClick={downloadPDF} className="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 rounded-xl transition shadow-lg text-sm flex items-center justify-center gap-2">
+                                                    <i className="fas fa-file-pdf"></i> Ekspor Dokumen Sertifikat Kesehatan (PDF)
+                                                </button>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {tab === TABS[1] && (
+                                        <div className="space-y-6 fade-in">
+                                            <div className="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm border border-blue-100"><i className="fas fa-handshake mr-2"></i><strong>Protokol Serah Terima:</strong> Komoditas didistribusikan dari otoritas pelabuhan perikanan menuju Fasilitas Pengolahan (UPI). Pihak penerima melaksanakan verifikasi pengukuran biomassa independen.</div>
+
+                                            <div className="flex items-center justify-between border rounded-xl p-4 bg-white relative">
+                                                <div className="text-center flex-1">
+                                                    <p className="text-[10px] font-bold text-gray-400 uppercase">OTORITAS PELABUHAN</p>
+                                                    <p className="font-bold text-sm mt-1">{lot.handover.sender}</p>
+                                                    <p className="text-xs text-gray-500 mt-1">{lot.handover.senderW} kg</p>
+                                                </div>
+                                                <div className="text-2xl text-gray-300"><i className="fas fa-arrow-right"></i></div>
+                                                <div className="text-center flex-1">
+                                                    <p className="text-[10px] font-bold text-gray-400 uppercase">FASILITAS PENGOLAHAN (UPI)</p>
+                                                    <p className="font-bold text-sm mt-1">{lot.handover.receiver || 'Belum Diidentifikasi'}</p>
+                                                    <p className="text-xs text-gray-500 mt-1">{lot.handover.receiverW ? `${lot.handover.receiverW} kg` : 'Dalam Proses Tunggu'}</p>
+                                                </div>
+                                            </div>
+                                            {(user.role === 'nelayan' || user.role === 'admin') && lot.handover.status === 'Di Pelabuhan' && (
+                                                <button onClick={handleKirim} className="bg-situna-dark text-white px-4 py-2 rounded-lg text-xs font-bold w-full">Instruksikan Distribusi ke Fasilitas UPI</button>
+                                            )}
+                                            {user.role === 'pengolah' && lot.handover.status === 'Menunggu Penerima' && (
+                                                <form onSubmit={handleTerima} className="bg-gray-50 border p-4 rounded-xl flex items-end gap-4">
+                                                    <div className="flex-1"><label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Verifikasi Biomassa Diterima (kg)</label><input required type="number" step="0.1" value={serahForm.rWeight} onChange={e=>setSerahForm({...serahForm, rWeight: e.target.value})} className="w-full border p-2 rounded text-sm" placeholder="Input Pengukuran Aktual" /></div>
+                                                    <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded text-xs font-bold h-[38px] shadow-sm">Konfirmasi Penerimaan</button>
+                                                </form>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {tab === TABS[2] && (
+                                        <div className="space-y-6 fade-in">
+                                            <div className="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm border border-blue-100"><i className="fas fa-balance-scale mr-2"></i><strong>Kalkulasi Neraca Massa:</strong> Komparasi rasio bahan baku (input) terhadap komoditas akhir, hasil sampingan, dan persentase penyusutan. Deviasi direkam secara akurat.</div>
+
+                                            {lot.processInfo ? (
+                                                <div className="border rounded-xl p-6 bg-white grid grid-cols-2 gap-4 text-center">
+                                                    <div className="bg-gray-50 p-3 rounded"><p className="text-[10px] text-gray-400 font-bold uppercase">Volume Bahan Baku (Input)</p><p className="text-lg font-bold">{lot.processInfo.original} kg</p></div>
+                                                    <div className="bg-green-50 p-3 rounded"><p className="text-[10px] text-green-600 font-bold uppercase">Volume Hasil Pengolahan</p><p className="text-lg font-bold text-green-700">{lot.processInfo.product} kg</p></div>
+                                                    <div className="col-span-2 text-xs text-gray-500 mt-2">Deviasi Penyusutan Terukur: <strong>{lot.processInfo.diff.toFixed(2)} kg</strong></div>
+                                                </div>
+                                            ) : (
+                                                user.role === 'pengolah' && lot.handover.status === 'Diterima' ? (
+                                                    <form onSubmit={handleNeraca} className="bg-gray-50 border p-4 rounded-xl grid grid-cols-3 gap-4">
+                                                        <div><label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Komoditas Loin (kg)</label><input required type="number" step="0.1" value={neracaForm.prod} onChange={e=>setNeracaForm({...neracaForm, prod: e.target.value})} className="w-full border p-2 rounded text-sm" /></div>
+                                                        <div><label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Sampingan (kg)</label><input required type="number" step="0.1" value={neracaForm.byprod} onChange={e=>setNeracaForm({...neracaForm, byprod: e.target.value})} className="w-full border p-2 rounded text-sm" /></div>
+                                                        <div><label className="block text-[10px] font-bold text-gray-500 mb-1 uppercase">Penyusutan (kg)</label><input required type="number" step="0.1" value={neracaForm.shrink} onChange={e=>setNeracaForm({...neracaForm, shrink: e.target.value})} className="w-full border p-2 rounded text-sm" /></div>
+                                                        <button type="submit" className="col-span-3 bg-situna-main text-white py-2.5 rounded-lg text-xs font-bold shadow-md mt-2">Kalkulasi Neraca Massa</button>
+                                                    </form>
+                                                ) : <p className="text-sm text-gray-400 italic text-center py-6">Pemberitahuan Sistem: Otorisasi komoditas wajib terdaftar pada fasilitas UPI bersangkutan.</p>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {tab === TABS[3] && (
+                                        <div className="space-y-6 fade-in">
+                                            <div className="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm border border-blue-100"><i className="fas fa-sitemap mr-2"></i><strong>Pohon Silsilah Komoditas:</strong> Tindakan reduksi ukuran (pemotongan loin) akan menginisiasi identitas turunan, namun seluruh riwayat operasional tetap terintegrasi pada data basis kapal penangkap.</div>
+
+                                            <div className="border rounded-xl p-4 bg-white">
+                                                <p className="text-[10px] font-bold text-gray-400 uppercase mb-2">Identitas Induk (Sumber Basis):</p>
+                                                {lot.parents.length === 0 ? <span className="text-xs text-gray-500 italic">- Dokumen ini merepresentasikan basis data primer -</span> : <div className="text-xs font-mono bg-gray-50 p-2 rounded border">{lot.parents.join(', ')}</div>}
+                                            </div>
+                                            {user.role === 'pengolah' && (
+                                                <form onSubmit={handlePecah} className="bg-gray-50 border p-4 rounded-xl flex items-end gap-4 mt-4">
+                                                    <div className="flex-1"><label className="block text-xs text-gray-500 mb-1">Alokasi Produksi B1 (kg)</label><input required type="number" step="0.1" value={pecahForm.w1} onChange={e=>setPecahForm({...pecahForm, w1: e.target.value})} className="w-full border p-2 rounded text-sm" /></div>
+                                                    <div className="flex-1"><label className="block text-xs text-gray-500 mb-1">Alokasi Produksi B2 (kg)</label><input required type="number" step="0.1" value={pecahForm.w2} onChange={e=>setPecahForm({...pecahForm, w2: e.target.value})} className="w-full border p-2 rounded text-sm" /></div>
+                                                    <button type="submit" className="bg-situna-dark text-white px-4 py-2 rounded text-xs font-bold h-[38px]">Restrukturisasi Kode Produksi</button>
+                                                </form>
+                                            )}
+                                        </div>
+                                    )}
+
+                                    {tab === TABS[4] && (
+                                        <div className="space-y-6 fade-in">
+                                            <div className="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm border border-blue-100"><i className="fas fa-snowflake mr-2"></i><strong>Pengendalian Rantai Dingin (Cold Chain):</strong> Temperatur termodinamika secara konsisten dijaga semenjak penyimpanan palka armada hingga pemrosesan UPI guna mencegah fluktuasi yang menginduksi degradasi kualitas.</div>
+
+                                            <div className="border rounded-xl p-6 bg-white text-center">
+                                                {lot.tempGap ? (
+                                                    <div><i className="fas fa-exclamation-triangle text-yellow-500 text-4xl mb-3"></i><h4 className="font-bold text-gray-800">Anomali Suhu Teridentifikasi</h4><p className="text-xs text-gray-500 mt-2">Ditemukan anomali peningkatan parameter temperatur di luar standar batas wajar pada audit data pencatatan.</p></div>
+                                                ) : (
+                                                    <div><i className="fas fa-check-circle text-green-500 text-4xl mb-3"></i><h4 className="font-bold text-gray-800">Stabilitas Parameter Suhu Optimal</h4><p className="text-xs text-gray-500 mt-2">Mekanisme rantai dingin terpantau ideal sepanjang tahapan distribusi komoditas.</p></div>
+                                                )}
+                                            </div>
+                                            {user.role === 'admin' && !lot.tempGap && <button onClick={simulasikanSuhu} className="w-full bg-yellow-100 text-yellow-700 py-2 rounded-lg font-bold text-xs border border-yellow-200"><i className="fas fa-magic mr-1"></i> Uji Simulasi Kegagalan Rantai Dingin</button>}
+                                        </div>
+                                    )}
+
+                                    {tab === TABS[5] && (
+                                        <div className="space-y-6 fade-in">
+                                            <div className="bg-blue-50 text-blue-800 p-4 rounded-xl text-sm border border-blue-100"><i className="fas fa-shield-alt mr-2"></i><strong>Buku Log Audit Ketertelusuran:</strong> Menampilkan pencatatan riwayat distribusi komoditas secara holistik dan tidak dapat dimodifikasi oleh entitas tidak berwenang.</div>
+
+                                            {user.role === 'admin' && (
+                                                <form onSubmit={handleKoreksi} className="bg-orange-50 border border-orange-200 p-4 rounded-xl grid grid-cols-2 gap-4 mb-6">
+                                                    <div className="col-span-2 text-xs font-bold text-orange-800 uppercase">Panel Kalibrasi Otoritas Administrator</div>
+                                                    <div><label className="block text-xs text-orange-700 mb-1">Parameter Terdahulu (Biomassa)</label><input readOnly value={koreksiForm.oldVal} className="w-full border border-orange-200 bg-orange-100 p-2 rounded text-orange-600 text-sm" /></div>
+                                                    <div><label className="block text-xs text-orange-700 mb-1">Parameter Rekonsiliasi Baru</label><input required type="number" step="0.1" value={koreksiForm.newVal} onChange={e=>setKoreksiForm({...koreksiForm, newVal: e.target.value})} className="w-full border p-2 rounded text-sm" /></div>
+                                                    <div className="col-span-2"><label className="block text-xs text-orange-700 mb-1">Justifikasi Kalibrasi (Kewajiban Administratif)</label><input required type="text" value={koreksiForm.reason} onChange={e=>setKoreksiForm({...koreksiForm, reason: e.target.value})} placeholder="Contoh: Kalibrasi pengukuran instrumen operasional pelabuhan." className="w-full border p-2 rounded text-sm" /></div>
+                                                    <button type="submit" className="col-span-2 bg-orange-500 text-white py-2 rounded-lg text-xs font-bold shadow">Eksekusi Penetapan Rekonsiliasi</button>
+                                                </form>
+                                            )}
+
+                                            <div className="relative border-l-2 border-gray-200 ml-3 space-y-4 pb-2">
+                                                {lot.history.slice().reverse().map((h, i) => (
+                                                    <div key={i} className="relative pl-5">
+                                                        <div className="absolute w-3 h-3 bg-situna-main rounded-full -left-[7px] top-1"></div>
+                                                        <div className="bg-white p-3 rounded-lg border border-gray-100 shadow-sm text-xs text-gray-700">
+                                                            <p className="font-medium leading-relaxed text-justify">{h.action}</p>
+                                                            <div className="text-[9px] text-gray-400 mt-2 font-bold uppercase"><i className="fas fa-user text-situna-main mr-1"></i> {h.actor} &nbsp;&bull;&nbsp; <i className="fas fa-clock text-situna-main mx-1"></i> {h.time}</div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Dokumen Cetak PDF Format A4 Margin 3-3-3-3 */}
+                    <div id="pdf-certificate-container" style={{display: 'none', width: '100%', backgroundColor: '#fff'}}>
+                        <div id="pdf-certificate-content" style={{ padding: '0', width: '100%', fontFamily: '"Times New Roman", Times, serif', color: '#000000', backgroundColor: '#ffffff', textAlign: 'left' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', borderBottom: '3px double #000000', paddingBottom: '15px', marginBottom: '20px' }}>
+                                <div style={{ width: '25mm', marginRight: '5mm', textAlign: 'center' }}>
+                                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '70px', height: '70px', margin: '0 auto' }}>
+                                        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#00a0d2', borderRadius: '1rem', transform: 'rotate(3deg)', overflow: 'hidden', zIndex: 0 }}>
+                                            <div style={{ position: 'absolute', width: '90px', height: '90px', backgroundColor: '#36bbe6', borderRadius: '50%', top: '-15px', left: '-15px' }}></div>
+                                        </div>
+                                        <img src="logo.png" alt="SITUNA Logo" style={{ position: 'absolute', width: '85px', height: '85px', objectFit: 'contain', zIndex: 10 }} onError={(e) => { e.target.onerror = null; e.src = './logo.png'; }} />
+                                    </div>
+                                </div>
+                                <div style={{ flex: 1, textAlign: 'left' }}>
+                                    <h2 style={{ fontSize: '14pt', fontWeight: 'bold', margin: 0, textTransform: 'uppercase', fontFamily: '"Times New Roman", Times, serif', color: '#000' }}>BADAN KARANTINA INDONESIA</h2>
+                                    <h3 style={{ fontSize: '14pt', fontWeight: 'bold', margin: '3px 0', textTransform: 'uppercase', fontFamily: '"Times New Roman", Times, serif', color: '#000' }}>SISTEM INFORMASI KETERTELUSURAN IKAN TUNA NASIONAL</h3>
+                                </div>
+                            </div>
+
+                            <div style={{ textAlign: 'left', marginBottom: '20px' }}>
+                                <h4 style={{ fontSize: '14pt', fontWeight: 'bold', textDecoration: 'underline', margin: 0, fontFamily: '"Times New Roman", Times, serif', color: '#000' }}>HASIL TRACEABILITY &amp; UJI BARANTIN</h4>
+                                <p style={{ fontSize: '12pt', margin: '5px 0 0 0', fontFamily: '"Times New Roman", Times, serif', color: '#000' }}>Nomor Seri Referensi Dokumen: <strong>{lot.id}</strong></p>
+                            </div>
+
+                            <p style={{ fontSize: '12pt', fontWeight: 'bold', margin: '15px 0 5px 0', fontFamily: '"Times New Roman", Times, serif', color: '#000' }}>1. TRACEABILITY (KETERTELUSURAN KAPAL - UPI)</p>
+                            <table style={{ width: '100%', marginBottom: '15px', borderCollapse: 'collapse', fontSize: '12pt', fontFamily: '"Times New Roman", Times, serif', color: '#000' }}>
+                                <tbody>
+                                    <tr>
+                                        <td style={{ padding: '6px', border: '1px solid #000', width: '35%' }}>Taksonomi Spesies Komoditas</td>
+                                        <td style={{ padding: '6px', border: '1px solid #000', fontWeight: 'bold' }}>{lot.species}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>Identitas Armada & Spesifikasi Alat</td>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>{lot.catchInfo?.kapal || '-'} ({lot.catchInfo?.alatTangkap || '-'})</td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>Status Legalitas Dokumen SHTI</td>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>{lot.catchInfo?.doc ? 'Bebas Praktik IUU Fishing (Dokumen Terlampir)' : 'Memerlukan Verifikasi Lanjutan'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>Area Operasional & Stabilitas Suhu</td>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>{lot.catchInfo?.wpp || '-'} | Pengendalian Cold Chain: {lot.catchInfo?.temp || '-'} °C</td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>Kalkulasi Akhir Pengukuran Biomassa</td>
+                                        <td style={{ padding: '6px', border: '1px solid #000', fontWeight: 'bold' }}>{lot.weight} kg</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <p style={{ fontSize: '12pt', fontWeight: 'bold', margin: '15px 0 5px 0', fontFamily: '"Times New Roman", Times, serif', color: '#000' }}>2. UJI BARANTIN (MUTU LABORATORIUM)</p>
+                            <table style={{ width: '100%', marginBottom: '25px', borderCollapse: 'collapse', fontSize: '12pt', fontFamily: '"Times New Roman", Times, serif', color: '#000' }}>
+                                <tbody>
+                                    <tr>
+                                        <td style={{ padding: '6px', border: '1px solid #000', width: '35%' }}>Konsentrasi Histamin Terukur</td>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>{lot.labInfo?.histamine || '0'} ppm (Standar Ambang Batas &lt; 50 ppm)</td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>Pemeriksaan Patogen & Parasitologi</td>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>{lot.labInfo?.parasit || 'Absensi Parasit'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>Kadar Cemaran Logam Berat (Pb / Hg)</td>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>{lot.labInfo?.metals || 'Kesesuaian Standar Keamanan'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style={{ padding: '6px', border: '1px solid #000' }}>Ketetapan Sertifikat Kesehatan</td>
+                                        <td style={{ padding: '6px', border: '1px solid #000', fontWeight: 'bold' }}>{lot.labInfo?.decision ? `${lot.labInfo.decision.toUpperCase()}` : 'MEMENUHI KELAYAKAN EKSPOR'}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginTop: '30px', pageBreakInside: 'avoid' }}>
+                                <div style={{ textAlign: 'center', width: '130px' }}>
+                                    <canvas ref={pdfQrRef} style={{ width: '90px', height: '90px', border: '1px solid #000', padding: '2px' }}></canvas>
+                                    <p style={{ fontSize: '10pt', margin: '3px 0 0 0', fontFamily: '"Times New Roman", Times, serif', color: '#000' }}>Kode Pemindai Validasi</p>
+                                </div>
+                                <div style={{ textAlign: 'left', width: '250px', fontSize: '12pt', fontFamily: '"Times New Roman", Times, serif', color: '#000' }}>
+                                    <p style={{ margin: 0 }}>Ditetapkan di : Jakarta</p>
+                                    <p style={{ margin: '2px 0 10px 0' }}>Pada Tanggal : {new Date().toLocaleDateString('id-ID', {day: '2-digit', month: 'long', year: 'numeric'})}</p>
+                                    <p style={{ fontWeight: 'bold', margin: 0 }}>A.n. KEPALA BADAN KARANTINA INDONESIA</p>
+                                    <p style={{ margin: '2px 0 45px 0' }}>Direktur Pengawasan &amp; Ketertelusuran,</p>
+                                    <p style={{ fontWeight: 'bold', textDecoration: 'underline', margin: 0 }}>Dr. H. M. Fauzan, M.Si.</p>
+                                    <p style={{ margin: 0 }}>NIP. 19780512 200501 1 003</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [view, setView] = useState('splash'); 
+            const [user, setUser] = useState(null);
+            const [toast, setToast] = useState({ show: false, message: '', type: '' });
+            const [activeLotId, setActiveLotId] = useState(null);
+            
+            const [lots, updateLots] = useSharedDatabase();
+
+            const showToast = (message, type = 'info') => setToast({ show: true, message, type });
+
+            const handleLogin = (u) => {
+                setUser(u);
+                setView('dashboard');
+                showToast(`Otentikasi Kredensial Tervalidasi: ${u.name}`, 'success');
+            };
+
+            return (
+                <div className="min-h-screen relative font-sans text-gray-800 selection:bg-situna-main selection:text-white">
+                    <div className="bg-blobs"><div className="blob blob-1"></div><div className="blob blob-2"></div></div>
+                    {toast.show && <Toast message={toast.message} type={toast.type} onClose={() => setToast({ show: false, message: '', type: '' })} />}
+                    
+                    {view === 'splash' && <SplashScreen onFinish={() => setView('login')} />}
+                    {view === 'login' && <LoginScreen onLogin={handleLogin} />}
+                    {view === 'dashboard' && user?.role === 'konsumen' && (
+                        <ConsumerPortal lots={lots} onLogout={() => { setUser(null); setView('login'); }} showToast={showToast} />
+                    )}
+                    {view === 'dashboard' && user?.role !== 'konsumen' && !activeLotId && (
+                        <Dashboard user={user} lots={lots} updateLots={updateLots} onViewDetail={id => setActiveLotId(id)} onLogout={() => { setUser(null); setView('login'); }} showToast={showToast} />
+                    )}
+                    {view === 'dashboard' && user?.role !== 'konsumen' && activeLotId && (
+                        <LotDetail lotId={activeLotId} lots={lots} user={user} updateLots={updateLots} onBack={() => setActiveLotId(null)} showToast={showToast} />
+                    )}
+                </div>
+            );
+        };
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
+</body>
+</html>
